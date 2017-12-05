@@ -1,4 +1,5 @@
 import System.Environment
+import Control.Monad
 import Data.Char
 
 is_pal :: (Eq a) => [a] -> Bool
@@ -10,5 +11,9 @@ letters :: [Char] -> [Char]
 letters = (map toLower) . (filter isAlpha)
 
 main = do
-    [word] <- getArgs
-    putStrLn $ if (is_pal $ letters word) then "is a palindrome" else "is not a palindrome"
+    words <- getArgs
+    forM_ words (\w -> do
+                    (putStr . show) w
+                    putStr " "
+                    (print . is_pal . letters) w
+                )

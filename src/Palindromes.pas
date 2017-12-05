@@ -56,15 +56,9 @@ begin
     nr_ispal := True
 end;
 
-procedure menu;
 var
-    s: string;
+    i: integer;
 begin
-    write('Enter the word > '); readln(s);
-    writeln('Palindrome?: ', is_palindrome(clean(s)),
-                        ' ', nr_ispal(nrclean(s)));
-end;
-
-begin
-    while true do menu;
+    for i := 1 to ParamCount do
+        writeln(ParamStr(i), ' ', is_palindrome(ParamStr(i)));
 end.
