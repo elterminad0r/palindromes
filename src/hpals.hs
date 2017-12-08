@@ -10,9 +10,10 @@ is_pal (x:xs) = (x == last xs) && (is_pal $ init xs)
 letters :: [Char] -> [Char]
 letters = (map toLower) . (filter isAlpha)
 
+main :: IO ()
 main = do
-    words <- getArgs
-    forM_ words (\w -> do
+    tests <- getArgs
+    forM_ tests (\w -> do
                     (putStr . show) w
                     putStr " "
                     (print . is_pal . letters) w
