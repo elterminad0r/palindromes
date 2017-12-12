@@ -47,12 +47,13 @@
 \begin{document}
     \maketitle
     \tableofcontents
-    \lstlistoflistings
+
+    \section{Introduction and definitions}
 
     In general, we say we have some 1-indexed string of letters $s$ of length
     $k$, and let $I$ denote the set of valid indices
     ($I = \{x: x \in \mathbb{N} \land 1 \leq x \leq k\}$).
-    We say that this string is a palindrome iff
+    We say that the following predicate determines if a string is a palindrome:
     $ \forall i \in I\ s_i = s_{k - i + 1} $.
 
     To make the following programs better fit the specification, we also say
@@ -61,6 +62,23 @@
     also say that we do not consider the casing of characters when testing for
     equality. These additions mean that, for example, `race car' and `Dennis
     and Edna sinned!' are palindromes.
+
+    However, this approach involves a lot of redundancy. We can use the
+    property that equality is symmetric ($a = b \iff b = a$) to formulate a new
+    set of indices to be checked:
+    ($I' = \{x: x \in \mathbb{N} \land 1 \leq x \leq
+        \left\lfloor \frac{k}{2} \right\rfloor\}$).
+    (as we know that $ s_i = s_{k - i + 1} \iff s_{k - i + 1} = s_i $).
+
+    Note that the flooring operation here excludes the middle index of an odd
+    string. This is desired, as the middle index of an odd string has index
+    $ i = \frac{k + 1}{2} $. Substituting into our predicate, this yields the
+    condition
+    $ s_{\frac{k + 1}{2}} = s_{k - \frac{k + 1}{2} + 1} $.
+    By some simplification, we can see that
+    $ k - \frac{k + 1}{2} + 1 = \frac{2k - (k + 1) + 2}{2} = \frac{k + 1}{2} $
+    This is the same as the index, so by the reflexivity of equality we know
+    the condition will always hold, and we don't have to check it.
 
     \section{Checking from either end}
     The first approach to this is to simply check if each character `lines up'
@@ -370,8 +388,8 @@ open:
 	gnome-open writeup.pdf
 \end{lstlisting}
 
-    Anyway, having compiled all the code, I could then go about testing each
-    script:
+    Anyway, having compiled all the code (using \verb|make all|), I could then
+    go about testing each script:
 
 \begin{lstlisting}[caption=Initial testing]
 $ bin/Palindromes ""
@@ -519,24 +537,28 @@ if __name__ == "__main__":
     and that may be true, but none of it is particularly interesting - most of
     the code is book-keeping and tying bits together.
 
-    An observant reader may also notice that I've written a really dense,
-    probably quite slow Python function to verify the palindromes generated.
+    An observant reader may also notice that I've written a two-line,
+    probably somewhat slow Python function to verify the palindromes generated.
     The other kind of interesting thing here is the automatic palindrome-non
     palindrome generation. A palindrome is very easy to generate - simply take
     a string of random characters, and append the same string but reversed{
     This clearly satisfies our condition
     $ \forall i \in I\ s_i = s_{k - i + 1} $.
     as a character at $i$ naturally maps to $k - i + 1$. We can also generate a
-    non-palindrome from a string by breaking the first natural condition. We
-    require that the string has at least one letter. We then take the first
-    letter, apply some function that cannot have the same output as an input
-    (the function produces a derangement), and append it to the string. In this
-    case, our derangement is a `rot13' shift. This clearly violates
-    $ s_1 = s_k $ so we know this isn't a palindrome.
+    non-palindrome from a string by breaking the condition. We require that the
+    string has at least one letter. We then take the first letter, apply some
+    function that cannot have the same output as an input (the function
+    produces a derangement), and append it to the string. In this case, our
+    derangement is a `rot13' shift. As this is a derangement, we have $ s_1
+    \neq s_k $ so we
+    know this isn't a palindrome.
+
+    The way it determines if an executable's response is affirmitave is by the
+    heuristic `is `true' a substring of the output?'
     
     Having written this script, I can test an executable that takes command
     line arguments by calling it. For ease of use, I wrote a zsh script calling
-    it with all the executables.
+    it with all the executables, and passing on all arguments with \verb|$*|.
 
 \begin{lstlisting}[caption=Test wrapper script]
 #!/usr/bin/zsh
@@ -563,11 +585,15 @@ finished in 0.002s
 
     The timings here probably aren't particularly indicative of anything - this
     is because I've written the scripts to only perform one check for their
-    entire runtime, so most of the time is probably IO or system call bound.
+    entire runtime, so most of the time is probably IO or system call bound, or
+    is spent "warming up", depending on the mode of compilation. A good
+    confirmation of this is the fact that the bytecode-interpreted Python that
+    has direct access to the array takes around 11ms, close to two orders of
+    magnitude below all the others.
 
     \section{Source}
 
-    All involved files, including this script, can be found at
+    All involved files, including this \LaTeX{} document, can be found at
     \verb|https://github.com/elterminad0r/palindromes|.
 
 \end{document}
