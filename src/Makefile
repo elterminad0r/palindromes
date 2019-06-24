@@ -1,5 +1,6 @@
 .PHONY: all
 all:
+	mkdir -p bin
 	make bin/cpals
 	make bin/hpals
 	make bin/recpals
@@ -10,7 +11,7 @@ bin/cpals: cpals.c
 	gcc -Wall -std=gnu99 -pedantic -O3 -o bin/cpals cpals.c
 
 bin/hpals: hpals.hs
-	ghc -Wall -O2 -outputdir bin -o bin/hpals hpals.hs
+	ghc -dynamic -Wall -O2 -outputdir bin -o bin/hpals hpals.hs
 
 bin/recpals: recpals.pas
 	fpc -vw -TLINUX -O3 -obin/recpals recpals.pas
