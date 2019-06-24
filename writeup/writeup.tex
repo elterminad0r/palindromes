@@ -1,60 +1,25 @@
-\documentclass{article}
+% Paper size, font size, equations align to the left
+\documentclass[fleqn,a4paper,11pt]{article}
 \title{Palindromes assignment}
 \author{Izaak van Dongen}
 
-\usepackage{savetrees}
+% Load all the configuration from a package, to keep content separate from
+% markup.
+\usepackage{mysty}
 
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{commath}
-
-\usepackage[parfill]{parskip}
-
-\usepackage[utf8]{inputenc}
-
-\usepackage{graphicx}
-
-\graphicspath{ {images/} }
-
-\usepackage{listings}
-\usepackage{color}
-
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
-    stringstyle=\color{codepurple},
-    basicstyle=\footnotesize,
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=2
-}
- 
-\lstset{style=mystyle}
-
+% The actual document content. Nowadays I would probably put this in a separate
+% .tex file and \input that.
 \begin{document}
     \maketitle
     \tableofcontents
 
     \section{Introduction and definitions}
 
-    In general, we say we have some 1-indexed string of letters $s$ of length
-    $k$, and let $I$ denote the set of valid indices
-    ($I = \{x: x \in \mathbb{N} \land 1 \leq x \leq k\}$).
+    In general, we say we have some 1-indexed string of letters \(s\) of length
+    \(k\), and let \(I\) denote the set of valid indices
+    (\(I = \{x: x \in \mathbb{N} \land 1 \leq x \leq k\}\)).
     We say that the following predicate determines if a string is a palindrome:
-    $ \forall i \in I\ s_i = s_{k - i + 1} $.
+    \( \forall i \in I\ s_i = s_{k - i + 1} \).
 
     To make the following programs better fit the specification, we also say
     that strings containing characters other than letters are palindromes if
@@ -64,23 +29,24 @@
     and Edna sinned!' are palindromes.
 
     However, this approach involves a lot of redundancy. We can use the
-    property that equality is symmetric ($a = b \iff b = a$) to formulate a new
+    property that equality is symmetric (\(a = b \iff b = a\)) to formulate a new
     set of indices to be checked:
-    ($I' = \{x: x \in \mathbb{N} \land 1 \leq x \leq
-        \left\lfloor \frac{k}{2} \right\rfloor\}$).
-    (as we know that $ s_i = s_{k - i + 1} \iff s_{k - i + 1} = s_i $).
+    (\(I' = \{x: x \in \mathbb{N} \land 1 \leq x \leq
+        \left\lfloor \frac{k}{2} \right\rfloor\}\)).
+    (as we know that \( s_i = s_{k - i + 1} \iff s_{k - i + 1} = s_i \)).
 
     Note that the flooring operation here excludes the middle index of an odd
     string. This is desired, as the middle index of an odd string has index
-    $ i = \frac{k + 1}{2} $. Substituting into our predicate, this yields the
+    \( i = \frac{k + 1}{2} \). Substituting into our predicate, this yields the
     condition
-    $ s_{\frac{k + 1}{2}} = s_{k - \frac{k + 1}{2} + 1} $.
+    \( s_{\frac{k + 1}{2}} = s_{k - \frac{k + 1}{2} + 1} \).
     By some simplification, we can see that
-    $ k - \frac{k + 1}{2} + 1 = \frac{2k - (k + 1) + 2}{2} = \frac{k + 1}{2} $
+    \( k - \frac{k + 1}{2} + 1 = \frac{2k - (k + 1) + 2}{2} = \frac{k + 1}{2} \)
     This is the same as the index, so by the reflexivity of equality we know
     the condition will always hold, and we don't have to check it.
 
     \section{Checking from either end}
+
     The first approach to this is to simply check if each character `lines up'
     with its complementary character at the other end of the string. Once the
     middle of the string is reached, the algorithm terminates.
@@ -111,11 +77,11 @@ end;
     This uses the more C-like idiom of breaking from a for loop, as opposed to
     explicitly defining some while loop to stop. To match this iterative
     function, I wrote another iterative function to `clean' an input string.
-    This uses a pretty simple for \ldots in loop to iterate over each
-    character, excluding non-alpha characters. Checking if characters are
-    letters is done with a Pascal set expression, and the resultant string is
-    built up by the concatenation operator, which apparently does not trigger
-    intermediary object creation so is not a concern in Pascal.
+    This uses a pretty simple for \ldots in loop to iterate over each character,
+    excluding non-alpha characters. Checking if characters are letters is done
+    with a Pascal set expression, and the resultant string is built up by the
+    concatenation operator, which apparently does not trigger intermediary
+    object creation so is not a concern in Pascal.
 
 \begin{lstlisting}[language=Pascal, caption=Nonrecursive `clean' function in Pascal]
 function nrclean(s: string): string;
@@ -148,13 +114,13 @@ end.
 \end{lstlisting}
 
     My chosen method of input is by command-line arguments, as this is easily
-    repeatable, and even automatable - this way of taking parameters for
-    console scripts is far more standard than by a menu interface that reads
-    from stdin presumed to be a tty. It means that, for example, I can more
-    easily call this entire program from another script, which might be useful
-    for testing purposes.
+    repeatable, and even automatable - this way of taking parameters for console
+    scripts is far more standard than by a menu interface that reads from stdin
+    presumed to be a tty. It means that, for example, I can more easily call
+    this entire program from another script, which might be useful for testing
+    purposes.
 
-    By the way, speaking of C \ldots
+    By the way, speaking of C\ldots
 
     \subsection{Imperative palindrome checking in C}
 
@@ -215,10 +181,10 @@ int main(int argc, char **argv) {
 
     \subsection{Recursive palindrome checking in Pascal}
 
-    What I've been using so far, this whole conception of `loops'
-    seems a little antiquated, and restricts the class of problems we can solve
-    (without implementing a stack). The same algorithm can also be implemented
-    entirely recursively, without the need for loops or even var statements:
+    What I've been using so far, this whole conception of `loops' seems a little
+    antiquated, and restricts the class of problems we can solve (without
+    implementing a stack). The same algorithm can also be implemented entirely
+    recursively, without the need for loops or even var statements:
 
 \begin{lstlisting}[language=Pascal, caption=Recursive palindrome function in Pascal]
 function _is_palindrome(s: string; lower, upper: integer): boolean;
@@ -237,15 +203,14 @@ begin
 end;
 \end{lstlisting}
 
-    This uses a wrapper function to `initialise' the variables. As this
-    function is tail-recursive, at least in theory it should be optimisable to
-    exactly the same machine code as the earlier, boring implementation. The
-    benefits of writing functions like this is that once you get used to the
-    idea, it can actually be very easy to write faultless, performant code. All
-    you need to do is consider how the problem might be approached as
-    suproblems, and consider the possible base cases. This kind of
-    formalisation also encourages a good understanding of what the problem
-    formulation actually means.
+    This uses a wrapper function to `initialise' the variables. As this function
+    is tail-recursive, at least in theory it should be optimisable to exactly
+    the same machine code as the earlier, boring implementation. The benefits of
+    writing functions like this is that once you get used to the idea, it can
+    actually be very easy to write faultless, performant code. All you need to
+    do is consider how the problem might be approached as suproblems, and
+    consider the possible base cases. This kind of formalisation also encourages
+    a good understanding of what the problem formulation actually means.
 
     As it happens, because this problem lends itself so well to a recursive,
     functional approach, as shown just now, it can be really quite concisely
@@ -280,10 +245,10 @@ main = do
     whitespace/formatting and type declarations. This is so much more concise
     because Haskell is designed around the functional paradigm, and because
     certain `string' operations become a lot easier in Haskell. Haskell strings
-    can be treated as immutable linked lists of characters, which means that
-    you can just pass subsections of the string to the next function, rather
-    than indices, without having to worry about performance, as it doesn't
-    involve intermediary object creation.
+    can be treated as immutable linked lists of characters, which means that you
+    can just pass subsections of the string to the next function, rather than
+    indices, without having to worry about performance, as it doesn't involve
+    intermediary object creation.
 
     \section{Obligatory slow approach}
 
@@ -348,7 +313,7 @@ end.
     \section{Testing}
 
     Having written all my programs, I first needed to compile them. To this end
-    I wrote a brief, \textit{very} simplistic Makefile:
+    I wrote a brief, \emph{very} simplistic Makefile:
 
 \begin{lstlisting}[language=make, caption=Makefile for programs]
 .PHONY: all
@@ -396,25 +361,25 @@ $ bin/Palindromes ""
  TRUE
 $ bin/Palindromes ","
 , TRUE
-$ bin/Palindromes aA 
+$ bin/Palindromes aA
 aA TRUE
 $ bin/Palindromes "Dennis and Edna sinned"
 Dennis and Edna sinned TRUE
 $ bin/Palindromes "R a, ,c EC a r                ^M"
- TRUE,c EC a r                
+ TRUE,c EC a r
 $ bin/Palindromes aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab FALSE
-$ bin/Palindromes ab                              
+$ bin/Palindromes ab
 ab FALSE
 \end{lstlisting}
 
 \iffalse $ \fi % help the syntax highlighter
 
     However this was a little dull\ldots Doing just a couple of inventive tests
-    for a single one of the scripts was turning out to be pretty
-    time-consuming. Conveniently, having implemented a rigid specification in
-    the same way for each script, I could take the \textit{far} quicker
-    approach of writing a script to automate this.
+    for a single one of the scripts was turning out to be pretty time-consuming.
+    Conveniently, having implemented a rigid specification in the same way for
+    each script, I could take the \emph{far} quicker approach of writing a
+    script to automate this.
 
 \begin{lstlisting}[language=Python, caption=Testing script]
 """
@@ -474,7 +439,7 @@ def get_args():
                             help="number of extra test cases to generate for both true and false")
     parser.add_argument("-d", action="store_true",
                             help="dump testcases")
-    return parser.parse_args() 
+    return parser.parse_args()
 
 def is_pal(s):
     s = list(filter(str.isalpha, s.lower()))
@@ -533,29 +498,28 @@ if __name__ == "__main__":
         test_script(script)
 \end{lstlisting}
 
-    This may seem like a very large script that took a lot of time to write,
-    and that may be true, but none of it is particularly interesting - most of
-    the code is book-keeping and tying bits together.
+    This may seem like a very large script that took a lot of time to write, and
+    that may be true, but none of it is particularly interesting - most of the
+    code is book-keeping and tying bits together.
 
-    An observant reader may also notice that I've written a two-line,
-    probably somewhat slow Python function to verify the palindromes generated.
-    The other kind of interesting thing here is the automatic palindrome-non
-    palindrome generation. A palindrome is very easy to generate - simply take
-    a string of random characters, and append the same string but reversed{
-    This clearly satisfies our condition
-    $ \forall i \in I\ s_i = s_{k - i + 1} $.
-    as a character at $i$ naturally maps to $k - i + 1$. We can also generate a
-    non-palindrome from a string by breaking the condition. We require that the
-    string has at least one letter. We then take the first letter, apply some
-    function that cannot have the same output as an input (the function
-    produces a derangement), and append it to the string. In this case, our
-    derangement is a `rot13' shift. As this is a derangement, we have $ s_1
-    \neq s_k $ so we
-    know this isn't a palindrome.
+    An observant reader may also notice that I've written a two-line, probably
+    somewhat slow Python function to verify the palindromes generated. The other
+    kind of interesting thing here is the automatic palindrome-non palindrome
+    generation. A palindrome is very easy to generate - simply take a string of
+    random characters, and append the same string but reversed. This clearly
+    satisfies our condition
+    \( \forall i \in I\ s_i = s_{k - i + 1} \).
+    as a character at \(i\) naturally maps to \(k - i + 1\). We can also
+    generate a non-palindrome from a string by breaking the condition. We
+    require that the string has at least one letter. We then take the first
+    letter, apply some function that cannot have the same output as an input
+    (the function produces a derangement), and append it to the string. In this
+    case, our derangement is a `rot13' shift. As this is a derangement, we have
+    \( s_1 \neq s_k \) so we know this isn't a palindrome.
 
     The way it determines if an executable's response is affirmitave is by the
     heuristic `is `true' a substring of the output?'
-    
+
     Having written this script, I can test an executable that takes command
     line arguments by calling it. For ease of use, I wrote a zsh script calling
     it with all the executables, and passing on all arguments with \verb|$*|.
@@ -570,7 +534,7 @@ python3 aux/test.py bin/cpals bin/recpals bin/hpals bin/Palindromes bin/revpals 
     So at last, I can test my executables:
 
 \begin{lstlisting}[caption=Actual testing]
-$ aux/all.zsh   
+$ aux/all.zsh
 generated 500 testcases in 0.011s
 verifying testcases
 finished in 0.002s
@@ -594,6 +558,6 @@ finished in 0.002s
     \section{Source}
 
     All involved files, including this \LaTeX{} document, can be found at
-    \verb|https://github.com/elterminad0r/palindromes|.
+    \url{https://github.com/elterminad0r/palindromes}.
 
 \end{document}
